@@ -1,5 +1,3 @@
-import { handleUpload } from '@vercel/blob/client';
-
 /**
  * Cấp token cho CLIENT-UPLOAD lên Vercel Blob.
  * Ảnh đi THẲNG từ trình duyệt → Vercel Blob (không đi xuyên qua function này),
@@ -7,6 +5,9 @@ import { handleUpload } from '@vercel/blob/client';
  *
  * Yêu cầu biến môi trường: BLOB_READ_WRITE_TOKEN (tự có khi tạo Blob store trên Vercel).
  * Tuỳ chọn: UPLOAD_SECRET — nếu đặt, client phải gửi đúng chuỗi này (clientPayload) mới được cấp token.
+ *
+ * Lưu ý: import động (await import) BÊN TRONG try để nếu module lỗi khi nạp
+ * (vd Node quá cũ) thì trả JSON lỗi đọc được, thay vì FUNCTION_INVOCATION_FAILED.
  */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -20,6 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { handleUpload } = await import('@vercel/blob/client');
     const jsonResponse = await handleUpload({
       body,
       request: req,
@@ -44,6 +46,6 @@ export default async function handler(req, res) {
     return res.status(200).json(jsonResponse);
   } catch (error) {
     console.error('uploadImage error:', error);
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error && (error.message || String(error)), name: error && error.name });
   }
 }
