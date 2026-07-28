@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gdhaha-pwa-v21';
+const CACHE_NAME = 'gdhaha-pwa-v22';
 const RUNTIME_CACHE = CACHE_NAME + '-runtime'; // ảnh Blob tải về khi xem (để xem offline sau đó)
 const ASSETS_TO_CACHE = [
   '/',
