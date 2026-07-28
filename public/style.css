@@ -732,6 +732,42 @@ img { max-width: 100%; }
   word-break: break-word;
 }
 
+/* Giữ nguyên xuống dòng người dùng đã nhập */
+.note-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Khi thu gọn: chỉ hiện 3 dòng, phần dư bị cắt */
+.item-note:not(.expanded) .note-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.note-toggle {
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+}
+.note-toggle:hover { text-decoration: underline; }
+
+.item-note .item-link {
+  color: var(--primary, #2aa7a0);
+  text-decoration: underline;
+  font-style: normal;
+  word-break: break-all;
+}
+.item-note .item-link:hover { opacity: .85; }
+
 .item-img-thumb {
   width: 70px; height: 70px;
   object-fit: cover;

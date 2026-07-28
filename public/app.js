@@ -996,7 +996,7 @@ function initEventPage() {
             <span>👥 ${escHtml(formatUsersDisplay(t.users, ev.members))}</span>
             ${t.payer     ? `<span>💳 ${escHtml(t.payer)}</span>`          : ''}
           </div>
-          ${t.note ? `<div class="item-note">💬 ${escHtml(t.note)}</div>` : ''}
+          ${t.note ? noteHtml('💬', t.note) : ''}
           ${imgs.length ? `
             <div class="ticket-img-gallery">
               ${imgs.map((img, gi) => {
@@ -1013,6 +1013,7 @@ function initEventPage() {
         </div>`;
       list.appendChild(card);
     });
+    setupNoteClamps(list);
   }
 
   // ── Render invoices ──
@@ -1041,7 +1042,7 @@ function initEventPage() {
             <span>👥 ${escHtml(formatUsersDisplay(inv.users, ev.members))}</span>
             ${inv.payer ? `<span>💳 ${escHtml(inv.payer)}</span>` : ''}
           </div>
-          ${inv.note   ? `<div class="item-note">📝 ${escHtml(inv.note)}</div>` : ''}
+          ${inv.note   ? noteHtml('📝', inv.note) : ''}
           ${imgs.length ? `
             <div class="ticket-img-gallery">
               ${imgs.map((img, gi) => {
@@ -1058,6 +1059,7 @@ function initEventPage() {
         </div>`;
       list.appendChild(card);
     });
+    setupNoteClamps(list);
   }
 
   // ── Render Schedule ──
@@ -1374,6 +1376,40 @@ function escHtml(str) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
+
+// Escape HTML an toàn rồi biến các URL http/https thành link click được.
+function linkify(str) {
+  return escHtml(str).replace(/(https?:\/\/[^\s<]+)/g, (url) =>
+    `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`
+  );
+}
+
+// Render 1 ghi chú: giữ nguyên xuống dòng (CSS pre-wrap) + link + nút mở rộng/thu gọn.
+function noteHtml(icon, text) {
+  return `<div class="item-note">
+            <div class="note-text">${icon} ${linkify(text)}</div>
+            <button class="note-toggle hidden" type="button" onclick="toggleNote(this)">Xem thêm ▾</button>
+          </div>`;
+}
+
+// Chỉ hiện nút mở rộng khi nội dung thực sự bị cắt (dài quá số dòng cho phép).
+function setupNoteClamps(container) {
+  if (!container) return;
+  container.querySelectorAll('.item-note').forEach(note => {
+    const text = note.querySelector('.note-text');
+    const btn  = note.querySelector('.note-toggle');
+    if (!text || !btn) return;
+    note.classList.remove('expanded');
+    btn.classList.toggle('hidden', text.scrollHeight - text.clientHeight <= 2);
+  });
+}
+
+window.toggleNote = function(btn) {
+  const note = btn.closest('.item-note');
+  if (!note) return;
+  const expanded = note.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Thu gọn ▴' : 'Xem thêm ▾';
+};
 
 function capitalise(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
