@@ -607,6 +607,11 @@ document.addEventListener('DOMContentLoaded', () => {
     _viewerIndex = (_viewerIndex + 1) % _viewerImages.length;
     _showViewerSlide();
   });
+  // Bấm vào nền tối (ngoài nút điều hướng / mở file) để đóng viewer
+  document.querySelector('#modalViewImage .modal-img-viewer')?.addEventListener('click', e => {
+    if (e.target.closest('.viewer-nav, .btn-viewer-open')) return;
+    closeModal('modalViewImage');
+  });
   // Keyboard nav
   document.addEventListener('keydown', e => {
     const viewer = document.getElementById('modalViewImage');
